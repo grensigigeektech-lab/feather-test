@@ -1,11 +1,3 @@
-"""
-auth.py - Authentication module for iGeek platform
-Handles user login, token generation, session management, and timeout logic.
-
-Recent fix: resolved login timeout issue — increased timeout threshold and
-added retry logic to prevent premature session expiry.
-"""
-
 import hashlib
 import hmac
 import time
