@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 # ── Response Helpers ──────────────────────────────────────────────────────────
 
-def success_response(data: Any, message: str = "OK", status: int = 200) -> dict:
+def success_response(data: Any, message: str = "Request successful", status: int = 200) -> dict:
     """Standard success response envelope."""
     return {
         "status": status,
