@@ -50,3 +50,4 @@ Branch: `feature/auth-improvements` → `main` · Author: Grensi · Awaiting rev
 Python 3.11 · pytest · HMAC-SHA256 sessions · PostgreSQL (planned)# igeek-test-project
 # igeek-test-project
 # feather-test
+# feather-test
