@@ -1,10 +1,3 @@
-"""
-tests/test_auth.py - Unit tests for the auth module
-Covers login, logout, token validation, and session management.
-
-Run with:  pytest tests/test_auth.py -v
-"""
-
 import time
 import pytest
 from unittest.mock import patch
