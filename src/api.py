@@ -1,11 +1,3 @@
-"""
-api.py - Core API layer for iGeek platform
-Handles request routing, input validation, and response formatting.
-
-Recent change: added input validation to all endpoints to prevent
-malformed data reaching the business logic layer.
-"""
-
 import re
 import logging
 from typing import Any, Optional
