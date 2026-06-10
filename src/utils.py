@@ -1,11 +1,3 @@
-"""
-utils.py - Shared utility/helper functions for iGeek platform
-General-purpose helpers used across auth, api, and other modules.
-
-Recent refactor: cleaned up helper functions — removed duplication,
-added type hints, and improved error handling throughout.
-"""
-
 import re
 import json
 import logging
