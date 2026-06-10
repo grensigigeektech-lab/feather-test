@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 # ── Constants ────────────────────────────────────────────────────────────────
 SECRET_KEY = "igeek-secret-key-change-in-prod"   # load from .env in production
 TOKEN_EXPIRY_SECONDS = 3600                        # 1 hour
-LOGIN_TIMEOUT_SECONDS = 30                         # max wait for login response
+LOGIN_TIMEOUT_SECONDS = 120                         # max wait for login response
 MAX_LOGIN_RETRIES = 3
 
 
