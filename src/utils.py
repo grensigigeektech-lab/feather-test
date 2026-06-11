@@ -3,6 +3,7 @@ import json
 import logging
 import hashlib
 import secrets
+import unicodedata
 from datetime import datetime, timezone
 from typing import Any, Optional, Union
 
@@ -11,14 +12,18 @@ logger = logging.getLogger(__name__)
 
 # ── String Utilities ──────────────────────────────────────────────────────────
 
-def sanitize_string(value: str, max_length: int = 255) -> str:
+def sanitize_string(value: Any, max_length: int = 255) -> str:
     """
     Strip whitespace and truncate a string to max_length.
     Returns empty string if input is not a valid string.
     """
     if not isinstance(value, str):
         return ""
-    return value.strip()[:max_length]
+
+    sanitized = value.strip()
+    if max_length < 0:
+        max_length = 0
+    return sanitized[:max_length]
 
 
 def slugify(text: str) -> str:
@@ -26,6 +31,8 @@ def slugify(text: str) -> str:
     Convert a string to a URL-safe slug.
     e.g. "Hello World!" → "hello-world"
     """
+    text = unicodedata.normalize("NFKD", text)
+    text = text.encode("ascii", "ignore").decode("ascii")
     text = text.lower().strip()
     text = re.sub(r"[^\w\s-]", "", text)
     text = re.sub(r"[\s_-]+", "-", text)
