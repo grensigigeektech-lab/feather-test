@@ -17,8 +17,17 @@ from auth import (
     _is_token_expired,
     _sessions,
     TOKEN_EXPIRY_SECONDS,
+    MSG_LOGIN_SUCCESS,
+    MSG_INVALID_CREDENTIALS,
 )
 from utils import generate_salt
+
+
+# ── Helper ─────────────────────────────────────────────────────────────────────
+
+def _expire_session(token: str):
+    """Backdate a session so it appears expired. Single place to update if structure changes."""
+    _sessions[token]["created_at"] = datetime.utcnow() - timedelta(seconds=TOKEN_EXPIRY_SECONDS + 10)
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -59,13 +68,13 @@ class TestLogin:
         result = login("grensi", "SecurePass@1", mock_user_db)
         assert result["success"] is True
         assert result["token"] is not None
-        assert result["message"] == "Login successful"
+        assert result["message"] == MSG_LOGIN_SUCCESS
 
     def test_wrong_password_fails(self, mock_user_db):
         result = login("grensi", "WrongPassword!", mock_user_db)
         assert result["success"] is False
         assert result["token"] is None
-        assert result["message"] == "Invalid credentials"
+        assert result["message"] == MSG_INVALID_CREDENTIALS
 
     def test_unknown_user_fails(self, mock_user_db):
         result = login("ghost_user", "anypassword", mock_user_db)
@@ -139,16 +148,13 @@ class TestValidateToken:
     def test_expired_token_returns_none(self, mock_user_db):
         result = login("grensi", "SecurePass@1", mock_user_db)
         token = result["token"]
-
-        # Manually backdate the session creation time to simulate expiry
-        _sessions[token]["created_at"] = datetime.utcnow() - timedelta(seconds=TOKEN_EXPIRY_SECONDS + 10)
-
+        _expire_session(token)
         assert validate_token(token) is None
 
     def test_expired_token_is_removed_from_sessions(self, mock_user_db):
         result = login("grensi", "SecurePass@1", mock_user_db)
         token = result["token"]
-        _sessions[token]["created_at"] = datetime.utcnow() - timedelta(seconds=TOKEN_EXPIRY_SECONDS + 10)
+        _expire_session(token)
         validate_token(token)
         assert token not in _sessions
 
@@ -187,12 +193,11 @@ class TestGetActiveSessions:
 
     def test_expired_sessions_excluded(self, mock_user_db):
         login("grensi", "SecurePass@1", mock_user_db)
-        r2 = login("raj", "RajPass@99", mock_user_db)
+        login("raj", "RajPass@99", mock_user_db)
 
-        # Expire grensi's session
         for token, session in list(_sessions.items()):
             if session["username"] == "grensi":
-                _sessions[token]["created_at"] = datetime.utcnow() - timedelta(seconds=TOKEN_EXPIRY_SECONDS + 10)
+                _expire_session(token)
 
         sessions = get_active_sessions()
         usernames = [s["username"] for s in sessions]
